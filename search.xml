@@ -33,31 +33,6 @@
     
     
     <entry>
-      <title>.</title>
-      <link href="/2020/08/24/collection/"/>
-      <url>/2020/08/24/collection/</url>
-      
-        <content type="html"><![CDATA[<blockquote><p>最近闲来无事，把基础部分复习一遍，查缺补漏。千篇一律的内容就不写了，放一些自己不太熟悉或者觉得比较重要的部分。</p></blockquote><h2 id="1"><a href="#1" class="headerlink" title="1."></a>1.</h2><blockquote><p>集合里都有那些类？都是一个父类吗？底层数据结构是什么？都是线程安全的吗？集合都可以怎么遍历？有哪些和集合相关的工具类？</p></blockquote><script>        document.querySelectorAll('.github-emoji')          .forEach(el => {            if (!el.dataset.src) { return; }            const img = document.createElement('img');            img.style = 'display:none !important;';            img.src = el.dataset.src;            img.addEventListener('error', () => {              img.remove();              el.style.color = 'inherit';              el.style.backgroundImage = 'none';              el.style.background = 'none';            });            img.addEventListener('load', () => {              img.remove();            });            document.body.appendChild(img);          });      </script>]]></content>
-      
-      
-      <categories>
-          
-          <category> java </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> java </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>看似简单但容易忽视的编程常识</title>
       <link href="/2020/08/13/recommand/"/>
       <url>/2020/08/13/recommand/</url>
