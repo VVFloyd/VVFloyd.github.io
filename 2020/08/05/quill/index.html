@@ -29,7 +29,7 @@
 
     <script src="/libs/jquery/jquery.min.js"></script>
 
-<meta name="generator" content="Hexo 5.0.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+<meta name="generator" content="Hexo 4.2.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
 
 
 <body>
@@ -571,7 +571,7 @@
                 <h1 id="1-需求："><a href="#1-需求：" class="headerlink" title="1. 需求："></a>1. 需求：</h1><p>管理后台需要一个编辑器对文本内容编辑，内容保存为html，需要兼容支付宝小程序的富文本插件。</p>
 <h1 id="2-主要问题："><a href="#2-主要问题：" class="headerlink" title="2. 主要问题："></a>2. 主要问题：</h1><ol>
 <li>quill编辑的样式都是以class的形式保存。小程序无法还原这类样式。解决方法有两个，一是在小程序的富文本编辑器外，引入对应富文本插件的样式；二是重写管理后台富文本的样式，改成style格式的。本次开发采用第二种方法解决。</li>
-<li>富文本的空格和段落展示有缺陷。参考<a target="_blank" rel="noopener" href="http://ueditor.baidu.com/website/onlinedemo.html">http://ueditor.baidu.com/website/onlinedemo.html</a>.测试方法：</li>
+<li>富文本的空格和段落展示有缺陷。参考<a href="http://ueditor.baidu.com/website/onlinedemo.html" target="_blank" rel="noopener">http://ueditor.baidu.com/website/onlinedemo.html</a>.测试方法：</li>
 </ol>
 <ul>
 <li>在编辑器输入“<code>111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111</code><br>”，然后在第一行中间任意位置键入空格。</li>
@@ -588,8 +588,8 @@
 </ol>
 <h1 id="4-具体实现："><a href="#4-具体实现：" class="headerlink" title="4.具体实现："></a>4.具体实现：</h1><h2 id="4-1-引入插件"><a href="#4-1-引入插件" class="headerlink" title="4.1 引入插件"></a>4.1 引入插件</h2><p>这部分比较简单，安装依赖后可快速搭建。参考链接：</p>
 <ol>
-<li>中文文档：<a target="_blank" rel="noopener" href="http://kang-bing-kui.gitbook.io/quill/">http://kang-bing-kui.gitbook.io/quill/</a></li>
-<li>详细步骤：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/a6cba69d6e49">https://www.jianshu.com/p/a6cba69d6e49</a></li>
+<li>中文文档：<a href="http://kang-bing-kui.gitbook.io/quill/" target="_blank" rel="noopener">http://kang-bing-kui.gitbook.io/quill/</a></li>
+<li>详细步骤：<a href="https://www.jianshu.com/p/a6cba69d6e49" target="_blank" rel="noopener">https://www.jianshu.com/p/a6cba69d6e49</a></li>
 </ol>
 <p>本次实现变量名称（仅供本文阅读方便）：</p>
 <quill-editor v-model="form.text" :options="quillOption" ref="text" class="ql-editor">
@@ -601,7 +601,7 @@
 <p>import “quill/dist/quill.bubble.css”;</p>
 <h4 id="4-引入quill和Parchment"><a href="#4-引入quill和Parchment" class="headerlink" title="4.引入quill和Parchment"></a>4.引入quill和Parchment</h4><p>import Quill from “quill”;</p>
 <p>var Parchment = Quill.<em>import</em>(“parchment”);</p>
-<p>什么是parchment？参考文档：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000019114222?utm_source=tag-newest">https://segmentfault.com/a/1190000019114222?utm_source=tag-newest</a></p>
+<p>什么是parchment？参考文档：<a href="https://segmentfault.com/a/1190000019114222?utm_source=tag-newest" target="_blank" rel="noopener">https://segmentfault.com/a/1190000019114222?utm_source=tag-newest</a></p>
 <p>不理解也没关系，不影响后续自定义。</p>
 <h4 id="5-改变对齐方式和字体的样式格式"><a href="#5-改变对齐方式和字体的样式格式" class="headerlink" title="5.改变对齐方式和字体的样式格式"></a>5.改变对齐方式和字体的样式格式</h4><p>在官方文档中，我们可以看到quill提供了不同的样式选择。</p>
 <p><img src="https://cdn.nlark.com/yuque/0/2020/png/441338/1596614717371-a54662a2-94fa-4c22-8164-b51ce7e831e8.png" alt="image.png"></p>
@@ -897,7 +897,7 @@ Quill.register(fontSizeStyle, true);
 
 );Parchment.register(lineHeightClass);Parchment.register(lineHeightStyle);
 </code></pre>
-<h4 id="8-空格失效的解决方法"><a href="#8-空格失效的解决方法" class="headerlink" title="8.空格失效的解决方法"></a>8.空格失效的解决方法</h4><p>在联调的过程中发现了一个很尴尬的问题，在后台编辑的文章里，如果输入很多空格，最后在小程序里只显示一个。后来把空格替换成&nbsp;也没有用。后来搜到空格其实有很多种，参考文档：<a target="_blank" rel="noopener" href="http://www.oicqzone.com/pc/2015083122336.html">http://www.oicqzone.com/pc/2015083122336.html</a></p>
+<h4 id="8-空格失效的解决方法"><a href="#8-空格失效的解决方法" class="headerlink" title="8.空格失效的解决方法"></a>8.空格失效的解决方法</h4><p>在联调的过程中发现了一个很尴尬的问题，在后台编辑的文章里，如果输入很多空格，最后在小程序里只显示一个。后来把空格替换成&nbsp;也没有用。后来搜到空格其实有很多种，参考文档：<a href="http://www.oicqzone.com/pc/2015083122336.html" target="_blank" rel="noopener">http://www.oicqzone.com/pc/2015083122336.html</a></p>
 <p>经过测试后，发现全角空格可以正常显示，也符合中文输入的习惯，于是对html中所有标签外的空格进行替换。</p>
 <p>this.form.text.replace(/(?&lt;=&gt;[^&lt;]*?) /g, “ ”)</p>
 <h4 id="9-图片上传方式更改"><a href="#9-图片上传方式更改" class="headerlink" title="9.图片上传方式更改"></a>9.图片上传方式更改</h4><p>这个网上资料很多，我直接贴代码了。</p>
