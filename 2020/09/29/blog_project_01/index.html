@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="做个小树洞01, Hexo">
+    <meta name="keywords" content="做个小树洞01, VVFloyd的博客">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>做个小树洞01 | Hexo</title>
+    <title>做个小树洞01 | VVFloyd的博客</title>
     <link rel="icon" type="image/png" href="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -181,7 +181,7 @@
         
         <img src="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png" class="logo-img circle responsive-img">
         
-        <div class="logo-name">Hexo</div>
+        <div class="logo-name">VVFloyd的博客</div>
         <div class="logo-desc">
             
             Never really desperate, only the lost of the soul.
@@ -830,7 +830,21 @@
     <span class="token punctuation">}</span>
 </code></pre>
 <p>其实主要就是生成并执行了Statement，具体细节自认功力不够，看得我眼花缭乱呜呜。等我再历练历练回来补全。</p>
-<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>至此，第一章结束啦。其实刚刚在读源码时有个问题，既然mybatis提供了一级缓存且默认开启，那为什么我们的业务中还需要redis呢？原来是因为spring中每条sql的执行都会隐式提交事务。<br>这样sqlSession每次都是新建的，缓存自然也不起作用啦。具体内容可以参考这篇博文哦：<a href="https://blog.csdn.net/ex_tang/article/details/83155031" target="_blank" rel="noopener">https://blog.csdn.net/ex_tang/article/details/83155031</a></p>
+<h2 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h2><p>至此，第一章结束啦。其实刚刚在读源码时有个问题，既然mybatis提供了一级缓存且默认开启，那为什么我们的业务中还需要redis呢？原来是因为spring中每条sql的执行都会隐式提交事务。<br>这样sqlSession每次都是新建的，缓存自然也不起作用啦。具体内容可以参考这篇博文哦：<a href="https://blog.csdn.net/ex_tang/article/details/83155031" target="_blank" rel="noopener">https://blog.csdn.net/ex_tang/article/details/83155031</a><br>勘误：上面这篇文章似乎还是不太对。我对select开启了事务，然后在两次查询间手动修改数据库，查询结果不一样。于是我去看了代码，发现直接调用mapper接口，会走到org.mybatis.spring.SqlSessionTemplate装饰类里。<br>这个类在finally里关闭了sqlSession.</p>
+<pre class=" language-java"><code class="language-java">    <span class="token keyword">finally</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>sqlSession <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            SqlSessionUtils<span class="token punctuation">.</span><span class="token function">closeSqlSession</span><span class="token punctuation">(</span>sqlSession<span class="token punctuation">,</span> SqlSessionTemplate<span class="token punctuation">.</span><span class="token keyword">this</span><span class="token punctuation">.</span>sqlSessionFactory<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+    <span class="token punctuation">}</span></code></pre>
+<p>综上，事务commit确实会导致sqlSession的关闭，但是spring集成mybatis缓存失效的原因却是这段代码中的原因。如果以自己创建sqlSession的方式查询，一级缓存是生效的，类似如下：</p>
+<pre class=" language-java"><code class="language-java">    SqlSession session <span class="token operator">=</span> sqlSessionFactory<span class="token punctuation">.</span><span class="token function">openSession</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    BArticle o <span class="token operator">=</span> session<span class="token punctuation">.</span><span class="token function">selectOne</span><span class="token punctuation">(</span><span class="token string">"com.vvf.practice.blog.dal.mapper.BArticleMapper.selectByPrimaryKey"</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    BArticle o1 <span class="token operator">=</span> session<span class="token punctuation">.</span><span class="token function">selectOne</span><span class="token punctuation">(</span><span class="token string">"com.vvf.practice.blog.dal.mapper.BArticleMapper.selectByPrimaryKey"</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    BArticleMapper mapper <span class="token operator">=</span> session<span class="token punctuation">.</span><span class="token function">getMapper</span><span class="token punctuation">(</span>BArticleMapper<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    BArticle o3 <span class="token operator">=</span> mapper<span class="token punctuation">.</span><span class="token function">selectByPrimaryKey</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>这三个对象中间，不论实际数据有什么变化，查询结果都和最开始的一样。</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -1099,8 +1113,8 @@ public class Po
 
         var url = document.location.href;
         newdiv.innerHTML += '<br />'
-            + '来源: Hexo<br />'
-            + '文章作者: John Doe<br />'
+            + '来源: VVFloyd的博客<br />'
+            + '文章作者: VVF<br />'
             + '文章链接: <a href="' + url + '">' + url + '</a><br />'
             + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
 
@@ -1296,7 +1310,7 @@ code[class*="language-"], pre[class*="language-"] { white-space: pre !important;
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             <span id="year">2020</span>
-            <a href="/about" target="_blank">John Doe</a>
+            <a href="/about" target="_blank">VVF</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
             |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
             <br>
