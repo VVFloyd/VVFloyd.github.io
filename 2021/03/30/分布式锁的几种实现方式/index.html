@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="SoftReference, VVFloyd的博客">
+    <meta name="keywords" content="分布式锁的几种实现方式, VVFloyd的博客">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>SoftReference | VVFloyd的博客</title>
+    <title>分布式锁的几种实现方式 | VVFloyd的博客</title>
     <link rel="icon" type="image/png" href="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -393,12 +393,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">SoftReference</h1>
+                    <h1 class="description center-align post-title">分布式锁的几种实现方式</h1>
                 </div>
             </div>
         </div>
@@ -519,12 +519,12 @@
                                 <span class="chip bg-color">java</span>
                             </a>
                         
-                            <a href="/tags/SoftReference/">
-                                <span class="chip bg-color">SoftReference</span>
+                            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                                <span class="chip bg-color">分布式</span>
                             </a>
                         
-                            <a href="/tags/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
-                                <span class="chip bg-color">基本数据类型</span>
+                            <a href="/tags/%E5%B9%B6%E5%8F%91/">
+                                <span class="chip bg-color">并发</span>
                             </a>
                         
                     </div>
@@ -548,7 +548,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2020-11-25
+                    2021-03-30
                 </div>
                 
 
@@ -564,68 +564,23 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <blockquote>
-<p>起因是大佬代码里的jvm缓存使用了软引用，一眼看过去，没有set值的地方，感到困惑。就针对SoftReferenc粗略学习了一番。<br>网上都有哪些balabala就不讲了，直接看代码吧。</p>
-</blockquote>
-<p>以下这段代码，o和o1是同一个对象，但是他们的属性值b变了。读者可以debug看看。</p>
-<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">tempTest</span> <span class="token punctuation">{</span>
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        B b <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">B</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        b<span class="token punctuation">.</span><span class="token function">setB</span><span class="token punctuation">(</span><span class="token string">"xoxoxoo"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        SoftReference sfB <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SoftReference</span> <span class="token punctuation">(</span>b <span class="token punctuation">)</span><span class="token punctuation">;</span>
-        Object o <span class="token operator">=</span> sfB<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        b<span class="token punctuation">.</span><span class="token function">setB</span><span class="token punctuation">(</span><span class="token string">"jajja"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        Object o1 <span class="token operator">=</span> sfB<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
-
-<span class="token keyword">class</span> <span class="token class-name">B</span><span class="token punctuation">{</span>
-    <span class="token keyword">private</span> String b<span class="token punctuation">;</span>
-
-    <span class="token keyword">public</span> String <span class="token function">getB</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">return</span> b<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setB</span><span class="token punctuation">(</span>String b<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">this</span><span class="token punctuation">.</span>b <span class="token operator">=</span> b<span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
-<p>这就是因为softReference持有了B的引用，其实再new 一个B的对象b2,将b的引用赋值给b2，产生的效果是一样的。<br>区别不过是SoftReference 这玩意儿能持有一个对象的引用，且只有在内存满时才被回收。</p>
-<hr>
-<p>再看如下代码,s1,s2的值一样吗？</p>
-<pre class=" language-java"><code class="language-java">    String value <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">(</span><span class="token string">"sfasf"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    SoftReference sfRefer <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">SoftReference</span> <span class="token punctuation">(</span>value <span class="token punctuation">)</span><span class="token punctuation">;</span>
-    String s1 <span class="token operator">=</span> String<span class="token punctuation">.</span><span class="token function">valueOf</span><span class="token punctuation">(</span>sfRefer<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    value<span class="token operator">=</span><span class="token string">"hahaha"</span><span class="token punctuation">;</span>
-    String s2 <span class="token operator">=</span> String<span class="token punctuation">.</span><span class="token function">valueOf</span><span class="token punctuation">(</span>sfRefer<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
-<p>肯定是不一样的，因为String是final类型的。如果不能理解，带入String st=value;去想就明白了。</p>
-<hr>
-<p>顺便一提，String 和 Long、Integer、Double、Short、Byte  等基础类型的包装类都具备不可变性，这些对象的线程安全性都是靠不可变性来保证的。<br>如果你仔细翻看这些类的声明、属性和方法，你会发现它们都严格遵守不可变类的三点要求：类和属性都是 final 的，所有方法均是只读的。 </p>
-<p>其实这几个类不仅是final类型的，还用到了一种设计模式：享元模式（Flyweight Pattern）。<br>利用享元模式可以减少创建对象的数量，从而减少内存占用。上面提到的这些基本数据类型的包装类都用到了享元模式。</p>
-<p>享元模式本质上就是一个对象池，因为对象全都不可变，所以变化的是对对象的引用。<br>利用享元模式创建对象的逻辑也很简单：创建之前，首先去对象池里看看是不是存在；如果已经存在，就利用对象池里的对象；如果不存在，就会新创建一个对象，并且把这个新创建出来的对象放进对象池里。</p>
-<p>Long甚至对享元做了优化。Long 内部维护了一个静态的对象池，缓存了[-128,127]之间的数字（Long 这个对象全部缓存太多了，只缓存利用率最高的这部分），这个对象池在 JVM 启动的时候就创建好了，而且这个对象池是静态不变的。<br>下面的示例代码出自 Java 1.8，valueOf() 方法就用到了 LongCache 这个缓存。<br>这个方法关于下标的确定和转换也非常有意思~</p>
-<pre class=" language-java"><code class="language-java">
-Long <span class="token function">valueOf</span><span class="token punctuation">(</span><span class="token keyword">long</span> l<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-  <span class="token keyword">final</span> <span class="token keyword">int</span> offset <span class="token operator">=</span> <span class="token number">128</span><span class="token punctuation">;</span>
-  <span class="token comment" spellcheck="true">// [-128,127]直接的数字做了缓存</span>
-  <span class="token keyword">if</span> <span class="token punctuation">(</span>l <span class="token operator">>=</span> <span class="token operator">-</span><span class="token number">128</span> <span class="token operator">&amp;&amp;</span> l <span class="token operator">&lt;=</span> <span class="token number">127</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
-    <span class="token keyword">return</span> LongCache
-      <span class="token punctuation">.</span>cache<span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span>l <span class="token operator">+</span> offset<span class="token punctuation">]</span><span class="token punctuation">;</span>
-  <span class="token punctuation">}</span>
-  <span class="token keyword">return</span> <span class="token keyword">new</span> <span class="token class-name">Long</span><span class="token punctuation">(</span>l<span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-<span class="token comment" spellcheck="true">//缓存，等价于对象池</span>
-<span class="token comment" spellcheck="true">//仅缓存[-128,127]直接的数字</span>
-<span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">LongCache</span> <span class="token punctuation">{</span>
-  <span class="token keyword">static</span> <span class="token keyword">final</span> Long cache<span class="token punctuation">[</span><span class="token punctuation">]</span> 
-    <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Long</span><span class="token punctuation">[</span><span class="token operator">-</span><span class="token punctuation">(</span><span class="token operator">-</span><span class="token number">128</span><span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token number">127</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-
-  <span class="token keyword">static</span> <span class="token punctuation">{</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">&lt;</span>cache<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-      cache<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Long</span><span class="token punctuation">(</span>i<span class="token operator">-</span><span class="token number">128</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-  <span class="token punctuation">}</span>
-<span class="token punctuation">}</span></code></pre>
-<p>分享完毕，拜<del>~</del></p>
+                <h2 id="分布式锁的几种实现方式"><a href="#分布式锁的几种实现方式" class="headerlink" title="分布式锁的几种实现方式"></a>分布式锁的几种实现方式</h2><h4 id="1-数据库"><a href="#1-数据库" class="headerlink" title="1.数据库"></a>1.数据库</h4><p>1.1 表记录锁</p>
+<p>搞一张表来记录锁的信息。id（锁住的时间，创建时间，balabala），要加锁时插入数据，释放锁时删除数据。</p>
+<p>1.2 乐观锁</p>
+<p>加版本号。</p>
+<p>1.3 悲观锁</p>
+<p>查询条件后加for update,十分容易锁表，珍惜生命菜鸡少用/(ㄒoㄒ)/~~</p>
+<p>1.4 唯一索引</p>
+<p>市面上的项目中基本都是这个（也就百分之98吧）。</p>
+<p>参考链接：<a href="https://blog.csdn.net/u013256816/article/details/92854794" target="_blank" rel="noopener">https://blog.csdn.net/u013256816/article/details/92854794</a></p>
+<p>问题：如果我对数据库进行分库分表，且冗余全量，是不是就不能用数据库实现分布式锁了？或者是要结合事务实现吗？</p>
+<h4 id="2-redis"><a href="#2-redis" class="headerlink" title="2. redis"></a>2. redis</h4><p>加锁：set个值进去；释放锁：del key</p>
+<p>参考链接：<a href="https://www.jianshu.com/p/a1ebab8ce78a" target="_blank" rel="noopener">https://www.jianshu.com/p/a1ebab8ce78a</a> </p>
+<h4 id="3-zookeepr"><a href="#3-zookeepr" class="headerlink" title="3.zookeepr"></a>3.zookeepr</h4><p>使用zookeeper第三方库Curator封装好的方法。</p>
+<p>​        InterProcessMutex lock = new InterProcessMutex(zkClient, lockPath);   </p>
+<p>加锁：lock.acquire();  释放锁：lock.release(); </p>
+<p>原理：利用zookeeper的临时顺序节点，参考：<a href="https://blog.csdn.net/wuzhiwei549/article/details/80692278" target="_blank" rel="noopener">https://blog.csdn.net/wuzhiwei549/article/details/80692278</a></p>
+<p>实际应用参考（代码咋写）：<a href="https://blog.csdn.net/hosaos/article/details/89521537" target="_blank" rel="noopener">https://blog.csdn.net/hosaos/article/details/89521537</a></p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -683,12 +638,12 @@ Long <span class="token function">valueOf</span><span class="token punctuation">
                                     <span class="chip bg-color">java</span>
                                 </a>
                             
-                                <a href="/tags/SoftReference/">
-                                    <span class="chip bg-color">SoftReference</span>
+                                <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                                    <span class="chip bg-color">分布式</span>
                                 </a>
                             
-                                <a href="/tags/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
-                                    <span class="chip bg-color">基本数据类型</span>
+                                <a href="/tags/%E5%B9%B6%E5%8F%91/">
+                                    <span class="chip bg-color">并发</span>
                                 </a>
                             
                         </div>
@@ -730,9 +685,73 @@ Long <span class="token function">valueOf</span><span class="token punctuation">
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
+            <div class="card">
+                <a href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="分布式锁的几种实现方式">
+                        
+                        <span class="card-title">分布式锁的几种实现方式</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            分布式锁的几种实现方式1.数据库1.1 表记录锁
+搞一张表来记录锁的信息。id（锁住的时间，创建时间，balabala），要加锁时插入数据，释放锁时删除数据。
+1.2 乐观锁
+加版本号。
+1.3 悲观锁
+查询条件后加for update,十
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-03-30
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/java/" class="post-category">
+                                    java
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/java/">
+                        <span class="chip bg-color">java</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                        <span class="chip bg-color">分布式</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%B9%B6%E5%8F%91/">
+                        <span class="chip bg-color">并发</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
             <div class="card">
                 <a href="/2021/03/30/proxy/">
                     <div class="card-image">
@@ -751,9 +770,9 @@ Long <span class="token function">valueOf</span><span class="token punctuation">
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-03-30
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-03-30
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -775,75 +794,6 @@ Long <span class="token function">valueOf</span><span class="token punctuation">
                     
                     <a href="/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">
                         <span class="chip bg-color">动态代理</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2020/10/16/blog_project_03/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="做个小树洞03（集成redis、异步线程、ElasticSearch、ik分词）">
-                        
-                        <span class="card-title">做个小树洞03（集成redis、异步线程、ElasticSearch、ik分词）</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            闲来无事，写个小东西，有空就把它丰满起来。你可认为它是个小树洞、轻博客，或者其他什么无关紧要的东西。写的什么不重要，主要是在构建项目的过程中复习和深入学习一些过去急于赶需求草草略过的东西。
-                        
-                    </div>
-                    <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2020-10-16
-                            </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E7%BB%83%E4%B9%A0%E9%A1%B9%E7%9B%AE/" class="post-category">
-                                    练习项目
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/SpringBoot/">
-                        <span class="chip bg-color">SpringBoot</span>
-                    </a>
-                    
-                    <a href="/tags/java/">
-                        <span class="chip bg-color">java</span>
-                    </a>
-                    
-                    <a href="/tags/ElasticSearch/">
-                        <span class="chip bg-color">ElasticSearch</span>
-                    </a>
-                    
-                    <a href="/tags/redis/">
-                        <span class="chip bg-color">redis</span>
-                    </a>
-                    
-                    <a href="/tags/thread/">
-                        <span class="chip bg-color">thread</span>
-                    </a>
-                    
-                    <a href="/tags/ik/">
-                        <span class="chip bg-color">ik</span>
                     </a>
                     
                 </div>
