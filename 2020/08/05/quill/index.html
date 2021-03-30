@@ -623,72 +623,72 @@ Quill.register(Align, true);
 <p><img src="https://cdn.nlark.com/yuque/0/2020/png/441338/1596615601801-a1560235-517b-4ae5-99e1-92547599c38f.png" alt="image.png"></p>
 <pre class=" language-vue"><code class="language-vue">import Parchment from 'parchment';
 
-class IdentAttributor extends Parchment.Attributor.Class &#123;
+class IdentAttributor extends Parchment.Attributor.Class {
 
-  add(node, value) &#123;
+  add(node, value) {
 
-    if (value === '+1' || value === '-1') &#123;
+    if (value === '+1' || value === '-1') {
 
-      let indent = this.value(node) || 0;      value = (value === '+1' ? (indent + 1) : (indent - 1));    &#125;
+      let indent = this.value(node) || 0;      value = (value === '+1' ? (indent + 1) : (indent - 1));    }
 
-    if (value === 0) &#123;
+    if (value === 0) {
 
-      this.remove(node);      return true;    &#125; else &#123;
+      this.remove(node);      return true;    } else {
 
-      return super.add(node, value);    &#125;
+      return super.add(node, value);    }
 
-  &#125;
+  }
 
-  canAdd(node, value) &#123;
+  canAdd(node, value) {
 
-    return super.canAdd(node, value) || super.canAdd(node, parseInt(value));  &#125;
+    return super.canAdd(node, value) || super.canAdd(node, parseInt(value));  }
 
-  value(node) &#123;
+  value(node) {
 
-    return parseInt(super.value(node)) || undefined;  // Don't return NaN  &#125;
+    return parseInt(super.value(node)) || undefined;  // Don't return NaN  }
 
-&#125;
+}
 
-let IndentClass = new IdentAttributor('indent', 'ql-indent', &#123;
+let IndentClass = new IdentAttributor('indent', 'ql-indent', {
 
   scope: Parchment.Scope.BLOCK,  whitelist: [1, 2, 3, 4, 5, 6, 7, 8]
 
-&#125;);
+});
 
-export &#123; IndentClass &#125;;
+export { IndentClass };
 </code></pre>
 <p>你问我怎么办，我也不知道除了自己写，还能怎么办(′д｀ )…彡…彡</p>
 <pre><code>const pixelLevels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
 const TAB_MULTIPLIER = 30;
 
-export class IndentAttributor extends Parchment.Attributor.Style &amp;#123;
+export class IndentAttributor extends Parchment.Attributor.Style {
 
-  add(node, value) &amp;#123;
+  add(node, value) {
 
 ​```
-return super.add(node, $&amp;#123;+value * TAB_MULTIPLIER&amp;#125;px);  &amp;#125;
+return super.add(node, ${+value * TAB_MULTIPLIER}px);  }
 ​```
 
-  value(node) &amp;#123;
+  value(node) {
 
 ​```
 return parseFloat(super.value(node)) / TAB_MULTIPLIER || undefined;
 ​```
 
-  &amp;#125;
+  }
 
-&amp;#125;
+}
 
-export const IndentStyle = new IndentAttributor("indent", "margin-left", &amp;#123;
+export const IndentStyle = new IndentAttributor("indent", "margin-left", {
 
   scope: Parchment.Scope.BLOCK,  
 
-  whitelist: pixelLevels.map(value =&gt; $&amp;#123;value * TAB_MULTIPLIER&amp;#125;px)
+  whitelist: pixelLevels.map(value =&gt; ${value * TAB_MULTIPLIER}px)
 
-&amp;#125;);
+});
 
-Quill.register(&amp;#123; "formats/indent": IndentStyle &amp;#125;, true);
+Quill.register({ "formats/indent": IndentStyle }, true);
 
 </code></pre>
 <p>上面这段代码，其实就是仿照源码，自定义一个样式，然后进行注册。每次向左或向右偏移30个像素。</p>
@@ -697,79 +697,79 @@ Quill.register(&amp;#123; "formats/indent": IndentStyle &amp;#125;, true);
 <p>这样的功能略显潦草，即使换成style的样式也觉得不够用。于是自己定义。首先你需要写个css.</p>
 <pre><code>size-set.css
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='10px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='10px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='10px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='10px']::before {
 
-    content: '10px';&amp;#125;
+    content: '10px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='12px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='12px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='12px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='12px']::before {
 
-    content: '12px';&amp;#125;
+    content: '12px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='14px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='14px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='14px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='14px']::before {
 
-    content: '14px';&amp;#125;
+    content: '14px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='16px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='16px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='16px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='16px']::before {
 
-    content: '16px';&amp;#125;
+    content: '16px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='18px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='18px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='18px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='18px']::before {
 
-    content: '18px';&amp;#125;
+    content: '18px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='20px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='20px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='20px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='20px']::before {
 
-    content: '20px';&amp;#125;
+    content: '20px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='22px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='22px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='22px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='22px']::before {
 
-    content: '22px';&amp;#125;
+    content: '22px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='24px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='24px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='24px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='24px']::before {
 
-    content: '24px';&amp;#125;
+    content: '24px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='26px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='26px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='26px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='26px']::before {
 
-    content: '26px';&amp;#125;
+    content: '26px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='28px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='28px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='28px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='28px']::before {
 
-    content: '28px';&amp;#125;
+    content: '28px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='30px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='30px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='30px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='30px']::before {
 
-    content: '30px';&amp;#125;
+    content: '30px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='32px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='32px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='32px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='32px']::before {
 
-    content: '32px';&amp;#125;
+    content: '32px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='36px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='36px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='36px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='36px']::before {
 
-    content: '36px';&amp;#125;
+    content: '36px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='38px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='38px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='38px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='38px']::before {
 
-    content: '38px';&amp;#125;
+    content: '38px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='40px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='40px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='40px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='40px']::before {
 
-    content: '40px';&amp;#125;
+    content: '40px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='45px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='45px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='45px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='45px']::before {
 
-    content: '45px';&amp;#125;
+    content: '45px';}
 
-.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='50px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='50px']::before &amp;#123;
+.ql-snow .ql-picker.ql-size .ql-picker-label[data-value='50px']::before, .ql-snow .ql-picker.ql-size .ql-picker-item[data-value='50px']::before {
 
-    content: '50px';&amp;#125;
+    content: '50px';}
 
 /**设置默认字体显示
 
-**/.ql-container &amp;#123;
+**/.ql-container {
 
-    font-size:16px;&amp;#125;
+    font-size:16px;}
 </code></pre>
 <p>然后在&lt; style&gt;标签中引入这个样式文件。</p>
 <p>@import “./size-set.css”;</p>
@@ -785,109 +785,109 @@ Quill.register(fontSizeStyle, true);
 <p>想要实现行间距，首先还是需要写个css（悄咪咪吐槽，语雀这个编辑器也不好用啊，代码看起来好乱Σ(っ °Д °;)っ）。</p>
 <pre><code>lineHeight.css
 
-.ql-snow .ql-picker.ql-lineheight &amp;#123;
+.ql-snow .ql-picker.ql-lineheight {
 
-    width: 58px;&amp;#125;
+    width: 58px;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.0"]::before {
 
-    content: "1.0";&amp;#125;
+    content: "1.0";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.0"]::before {
 
-    content: "1.0" !important;&amp;#125;
+    content: "1.0" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.2"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.2"]::before {
 
-    content: "1.2";&amp;#125;
+    content: "1.2";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.2"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.2"]::before {
 
-    content: "1.2" !important;&amp;#125;
+    content: "1.2" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.5"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.5"]::before {
 
-    content: "1.5";&amp;#125;
+    content: "1.5";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.5"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.5"]::before {
 
-    content: "1.5" !important;&amp;#125;
+    content: "1.5" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.6"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.6"]::before {
 
-    content: "1.6";&amp;#125;
+    content: "1.6";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.6"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.6"]::before {
 
-    content: "1.6" !important;&amp;#125;
+    content: "1.6" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.8"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="1.8"]::before {
 
-    content: "1.8";&amp;#125;
+    content: "1.8";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.8"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="1.8"]::before {
 
-    content: "1.8" !important;&amp;#125;
+    content: "1.8" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.0"]::before {
 
-    content: "2.0";&amp;#125;
+    content: "2.0";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.0"]::before {
 
-    content: "2.0" !important;&amp;#125;
+    content: "2.0" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.4"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.4"]::before {
 
-    content: "2.4";&amp;#125;
+    content: "2.4";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.4"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.4"]::before {
 
-    content: "2.4" !important;&amp;#125;
+    content: "2.4" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.8"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="2.8"]::before {
 
-    content: "2.8";&amp;#125;
+    content: "2.8";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.8"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="2.8"]::before {
 
-    content: "2.8" !important;&amp;#125;
+    content: "2.8" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="3.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="3.0"]::before {
 
-    content: "3.0";&amp;#125;
+    content: "3.0";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="3.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="3.0"]::before {
 
-    content: "3.0" !important;&amp;#125;
+    content: "3.0" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="4.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="4.0"]::before {
 
-    content: "4.0";&amp;#125;
+    content: "4.0";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="4.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="4.0"]::before {
 
-    content: "4.0" !important;&amp;#125;
+    content: "4.0" !important;}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="5.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-item[data-value="5.0"]::before {
 
-    content: "5.0";&amp;#125;
+    content: "5.0";}
 
-.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="5.0"]::before &amp;#123;
+.ql-snow .ql-picker.ql-lineheight .ql-picker-label[data-value="5.0"]::before {
 
-    content: "5.0" !important;&amp;#125;
+    content: "5.0" !important;}
 </code></pre>
 <p>同样，需要引入样式</p>
 <p>@import “./lineHeight.css”;</p>
 <p>这里有个小问题，就是这个样式，在回显的时候会被插件本身的样式覆盖，想了很久也不知道怎么办。于是想到了个很暴力的方法，放到app.js里。期待能有前端的同学提供更好的解决方案。作为后台的同学，开发前端时毕竟还是以需求为导向，没有更多精力研究前端的原理≡(▔﹏▔)≡。</p>
 <p>最后同样，注册就完事儿~</p>
-<pre><code>var lineHeightConfig = &amp;#123;
+<pre><code>var lineHeightConfig = {
 
   scope: Parchment.Scope.INLINE,  whitelist: [
 
     "1.0",    "1.2",    "1.5",    "1.6",    "1.8",    "2.0",    "2.4",    "2.8",    "3.0",    "4.0",    "5.0"  ]
 
-&amp;#125;;var lineHeightClass = new Parchment.Attributor.Class(
+};var lineHeightClass = new Parchment.Attributor.Class(
 
   "lineheight",  "ql-line-height",  lineHeightConfig
 
@@ -903,88 +903,88 @@ Quill.register(fontSizeStyle, true);
 <h4 id="9-图片上传方式更改"><a href="#9-图片上传方式更改" class="headerlink" title="9.图片上传方式更改"></a>9.图片上传方式更改</h4><p>这个网上资料很多，我直接贴代码了。</p>
 <p>这里的lineheight是文本高亮，需要安装依赖，然后引入import <strong>hljs</strong> from “highlight.js”; 辅助功能不用也OK~</p>
 <pre><code>/*富文本编辑图片上传配置*/
-const uploadConfig = &amp;#123;
+const uploadConfig = {
   action: "啦啦啦啦啦啦", // 必填参数 图片上传地址  
 methods: "POST", // 必填参数 图片上传方式  
 token: "", // 可选参数 如果需要token验证，假设你的token有存放在sessionStorage  
 name: "file", // 必填参数 文件的参数名  
 size: 500, // 可选参数   图片大小，单位为Kb, 1M = 1024Kb  
 accept: "image/png, image/gif, image/jpeg, image/bmp, image/x-icon" // 可选 可上传的图片格式
-&amp;#125;;
+};
 
-const handlers = &amp;#123;
-lineheight: function(e) &amp;#123;
+const handlers = {
+lineheight: function(e) {
 //添加工具方法
 let Range = this.quill.getSelection();
 this.quill.formatText(Range.index, Range.length, "lineheight", e);
-&amp;#125;,
-image: function image() &amp;#123;
+},
+image: function image() {
 var self = this;
 var fileInput = this.container.querySelector("input.ql-image[type=file]");
-if (fileInput === null) &amp;#123;
+if (fileInput === null) {
   fileInput = document.createElement("input");
   fileInput.setAttribute("type", "file");
   // 设置图片参数名
-  if (uploadConfig.name) &amp;#123;
+  if (uploadConfig.name) {
     fileInput.setAttribute("name", uploadConfig.name);
-  &amp;#125;
+  }
   // 可设置上传图片的格式
   fileInput.setAttribute("accept", uploadConfig.accept);
   fileInput.classList.add("ql-image");
   // 监听选择文件
-  fileInput.addEventListener("change", function() &amp;#123;
+  fileInput.addEventListener("change", function() {
     // 创建formData
     var formData = new FormData();
     formData.append(uploadConfig.name, fileInput.files[0]);
     formData.append("object", "product");
     // 如果需要token且存在token
-    if (uploadConfig.token) &amp;#123;
+    if (uploadConfig.token) {
       formData.append("token", uploadConfig.token);
-    &amp;#125;
+    }
     // 图片上传
     var xhr = new XMLHttpRequest();
     xhr.open(uploadConfig.methods, uploadConfig.action, true);
     // 上传数据成功，会触发
-    xhr.onload = function() &amp;#123;
-      if (xhr.status === 200) &amp;#123;
+    xhr.onload = function() {
+      if (xhr.status === 200) {
         var res = JSON.parse(xhr.responseText);
         let length = self.quill.getSelection(true).index;
         //这里很重要，你图片上传成功后，img的src需要在这里添加，res.path就是你服务器返回的图片链接。
         self.quill.insertEmbed(length, "image", res.data.src);
         self.quill.setSelection(length + 1);
-      &amp;#125;
+      }
       fileInput.value = "";
-    &amp;#125;;
+    };
     // 开始上传数据
-    xhr.upload.onloadstart = function() &amp;#123;
+    xhr.upload.onloadstart = function() {
       fileInput.value = "";
-    &amp;#125;;
+    };
     // 当发生网络异常的时候会触发，如果上传数据的过程还未结束
-    xhr.upload.onerror = function() &amp;#123;&amp;#125;;
+    xhr.upload.onerror = function() {};
     // 上传数据完成（成功或者失败）时会触发
-    xhr.upload.onloadend = function() &amp;#123;
+    xhr.upload.onloadend = function() {
       // console.log('上传结束')
-    &amp;#125;;
+    };
     xhr.send(formData);
-  &amp;#125;);
+  });
   this.container.appendChild(fileInput);
-&amp;#125;
+}
 fileInput.click();
-&amp;#125;
-&amp;#125;;
-export default &amp;#123;
+}
+};
+export default {
 placeholder: "",
 theme: "snow", // 主题
-modules: &amp;#123;
-toolbar: &amp;#123;
+modules: {
+toolbar: {
 container: toolOptions, // 工具栏选项
 handlers: handlers // 事件重写
-&amp;#125;,
-syntax: &amp;#123;
+},
+syntax: {
 highlight: text =&gt; hljs.highlightAuto(text).value
-&amp;#125;
-&amp;#125;
-&amp;#125;;</code></pre>
+}
+}
+};</code></pre>
 <p>在引用quill的html上，也要加上以下这段内容</p>
 <p><el-upload class="avatar-uploader" action="你的OSS接口" name="file" :show-file-list="false" :on-success="uploadSuccessEdit" :on-error="uploadErrorEdit" :before-upload="beforeUploadEdit" style="line-height: 0px"></el-upload></p>
 <h4 id="10-定义工具栏"><a href="#10-定义工具栏" class="headerlink" title="10.定义工具栏"></a>10.定义工具栏</h4><p>上面所有的内容，最后都要在工具栏定义，不然工具栏始终是默认的样子。</p>
@@ -994,31 +994,31 @@ highlight: text =&gt; hljs.highlightAuto(text).value
 
 ["blockquote", "code-block"],  
 
-[&amp;#123; header: 1 &amp;#125;, &amp;#123; header: 2 &amp;#125;],  
+[{ header: 1 }, { header: 2 }],  
 
-[&amp;#123; list: "ordered" &amp;#125;, &amp;#123; list: "bullet" &amp;#125;],  [&amp;#123; script: "sub" &amp;#125;, &amp;#123; script: "super" &amp;#125;], 
+[{ list: "ordered" }, { list: "bullet" }],  [{ script: "sub" }, { script: "super" }], 
 
-[&amp;#123; indent: "-1" &amp;#125;, &amp;#123; indent: "+1" &amp;#125;],  [&amp;#123; direction: "rtl" &amp;#125;],  // [&amp;#123; size: ["small", false, "large", "huge"] &amp;#125;],  
+[{ indent: "-1" }, { indent: "+1" }],  [{ direction: "rtl" }],  // [{ size: ["small", false, "large", "huge"] }],  
 
-[&amp;#123; size: fontSizeStyle.whitelist &amp;#125;],  
+[{ size: fontSizeStyle.whitelist }],  
 
-[&amp;#123; header: [1, 2, 3, 4, 5, 6, false] &amp;#125;], 
+[{ header: [1, 2, 3, 4, 5, 6, false] }], 
 
-[&amp;#123; color: [] &amp;#125;, &amp;#123; background: [] &amp;#125;], 
+[{ color: [] }, { background: [] }], 
 
-[&amp;#123; font: [] &amp;#125;],  [&amp;#123; align: [] &amp;#125;],  
+[{ font: [] }],  [{ align: [] }],  
 
 ["clean"],  ["link", "image"],  
 
 [
 
-    &amp;#123;
+    {
 
       lineheight: [
 
         "1.0",        "1.2",        "1.5",        "1.6",        "1.8",        "2.0",        "2.4",        "2.8",        "3.0",        "4.0",        "5.0"      ]
 
-    &amp;#125;
+    }
 
   ]
 

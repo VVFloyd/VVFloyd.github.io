@@ -515,16 +515,16 @@
                     
                     <div class="article-tag">
                         
+                            <a href="/tags/java/">
+                                <span class="chip bg-color">java</span>
+                            </a>
+                        
                             <a href="/tags/SpringBoot/">
                                 <span class="chip bg-color">SpringBoot</span>
                             </a>
                         
                             <a href="/tags/AOP/">
                                 <span class="chip bg-color">AOP</span>
-                            </a>
-                        
-                            <a href="/tags/java/">
-                                <span class="chip bg-color">java</span>
                             </a>
                         
                     </div>
@@ -573,10 +573,10 @@
 <span class="token keyword">import</span> lombok<span class="token punctuation">.</span>Data<span class="token punctuation">;</span>
 
 <span class="token annotation punctuation">@Data</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Pojo</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Pojo</span> <span class="token punctuation">{</span>
     <span class="token annotation punctuation">@IsYS</span>
     <span class="token keyword">private</span> String desc<span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+<span class="token punctuation">}</span></code></pre>
 <ol start="2">
 <li>然后定义这个注解，并且给它指定校验方案。</li>
 </ol>
@@ -622,22 +622,22 @@
 
  */</span>
 
-<span class="token annotation punctuation">@Target</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>ElementType<span class="token punctuation">.</span>METHOD<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>FIELD<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>ANNOTATION_TYPE<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>CONSTRUCTOR<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>PARAMETER<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">)</span>
+<span class="token annotation punctuation">@Target</span><span class="token punctuation">(</span><span class="token punctuation">{</span>ElementType<span class="token punctuation">.</span>METHOD<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>FIELD<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>ANNOTATION_TYPE<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>CONSTRUCTOR<span class="token punctuation">,</span> ElementType<span class="token punctuation">.</span>PARAMETER<span class="token punctuation">}</span><span class="token punctuation">)</span>
 <span class="token annotation punctuation">@Retention</span><span class="token punctuation">(</span>RetentionPolicy<span class="token punctuation">.</span>RUNTIME<span class="token punctuation">)</span>
 <span class="token annotation punctuation">@Documented</span>
 <span class="token annotation punctuation">@Constraint</span><span class="token punctuation">(</span>
-        validatedBy <span class="token operator">=</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>IsYSValidator<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+        validatedBy <span class="token operator">=</span> <span class="token punctuation">{</span>IsYSValidator<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">}</span>
 <span class="token punctuation">)</span><span class="token comment" spellcheck="true">//引进校验器</span>
-<span class="token keyword">public</span> @<span class="token keyword">interface</span> <span class="token class-name">IsYS</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> @<span class="token keyword">interface</span> <span class="token class-name">IsYS</span> <span class="token punctuation">{</span>
 
     <span class="token keyword">boolean</span> <span class="token function">required</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token boolean">true</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//默认不能为空</span>
 
     String <span class="token function">message</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token string">"对YS描述错误"</span><span class="token punctuation">;</span><span class="token comment" spellcheck="true">//校验不通过输出信息</span>
 
-    Class<span class="token operator">&lt;</span><span class="token operator">?</span><span class="token operator">></span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">groups</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
+    Class<span class="token operator">&lt;</span><span class="token operator">?</span><span class="token operator">></span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">groups</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
 
-    Class<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Payload</span><span class="token operator">></span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">payload</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+    Class<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">Payload</span><span class="token operator">></span><span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">payload</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">default</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre>
 <pre class=" language-java"><code class="language-java"><span class="token keyword">package</span> com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>constraint_validator<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>lang3<span class="token punctuation">.</span>StringUtils<span class="token punctuation">;</span>
@@ -646,29 +646,29 @@
 <span class="token keyword">import</span> javax<span class="token punctuation">.</span>validation<span class="token punctuation">.</span>ConstraintValidatorContext<span class="token punctuation">;</span>
 
 
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">IsYSValidator</span> <span class="token keyword">implements</span> <span class="token class-name">ConstraintValidator</span><span class="token operator">&lt;</span>IsYS<span class="token punctuation">,</span> String<span class="token operator">></span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">IsYSValidator</span> <span class="token keyword">implements</span> <span class="token class-name">ConstraintValidator</span><span class="token operator">&lt;</span>IsYS<span class="token punctuation">,</span> String<span class="token operator">></span> <span class="token punctuation">{</span>
 
     <span class="token keyword">private</span> <span class="token keyword">boolean</span> required <span class="token operator">=</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
 
     <span class="token comment" spellcheck="true">//初始化</span>
     <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">initialize</span><span class="token punctuation">(</span>IsYS isYS<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">initialize</span><span class="token punctuation">(</span>IsYS isYS<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         required <span class="token operator">=</span> isYS<span class="token punctuation">.</span><span class="token function">required</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
     <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">isValid</span><span class="token punctuation">(</span>String value<span class="token punctuation">,</span> ConstraintValidatorContext constraintValidatorContext<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>required<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">isValid</span><span class="token punctuation">(</span>String value<span class="token punctuation">,</span> ConstraintValidatorContext constraintValidatorContext<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>required<span class="token punctuation">)</span> <span class="token punctuation">{</span>
             <span class="token keyword">return</span> ValidatorUtil<span class="token punctuation">.</span><span class="token function">isYS</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span> <span class="token keyword">else</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>StringUtils<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>StringUtils<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
                 <span class="token keyword">return</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
-            <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span> <span class="token keyword">else</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
                 <span class="token keyword">return</span> ValidatorUtil<span class="token punctuation">.</span><span class="token function">isYS</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
 <pre class=" language-java"><code class="language-java"><span class="token keyword">package</span> com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>constraint_validator<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
 
 <span class="token keyword">import</span> org<span class="token punctuation">.</span>apache<span class="token punctuation">.</span>commons<span class="token punctuation">.</span>lang3<span class="token punctuation">.</span>StringUtils<span class="token punctuation">;</span>
@@ -676,19 +676,19 @@
 <span class="token keyword">import</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>regex<span class="token punctuation">.</span>Matcher<span class="token punctuation">;</span>
 <span class="token keyword">import</span> java<span class="token punctuation">.</span>util<span class="token punctuation">.</span>regex<span class="token punctuation">.</span>Pattern<span class="token punctuation">;</span>
 
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ValidatorUtil</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ValidatorUtil</span> <span class="token punctuation">{</span>
 
     <span class="token comment" spellcheck="true">//匹配 YS是个xxxxx的小猪</span>
     <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> Pattern mobile_pattern <span class="token operator">=</span> Pattern<span class="token punctuation">.</span><span class="token function">compile</span><span class="token punctuation">(</span><span class="token string">"(YS是只)(.*?)(的小猪)"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isYS</span><span class="token punctuation">(</span>String src<span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>StringUtils<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>src<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">boolean</span> <span class="token function">isYS</span><span class="token punctuation">(</span>String src<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">if</span><span class="token punctuation">(</span>StringUtils<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>src<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
             <span class="token keyword">return</span> <span class="token boolean">false</span><span class="token punctuation">;</span>
-        <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
         Matcher m <span class="token operator">=</span> mobile_pattern<span class="token punctuation">.</span><span class="token function">matcher</span><span class="token punctuation">(</span>src<span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token keyword">return</span> m<span class="token punctuation">.</span><span class="token function">matches</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
 <p>3.可以测试啦</p>
 <pre class=" language-java"><code class="language-java"><span class="token keyword">package</span> com<span class="token punctuation">.</span>example<span class="token punctuation">.</span>constraint_validator<span class="token punctuation">.</span>test<span class="token punctuation">;</span>
 
@@ -705,17 +705,17 @@
 
 <span class="token annotation punctuation">@RestController</span>
 <span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span><span class="token string">"test"</span><span class="token punctuation">)</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestController</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">TestController</span> <span class="token punctuation">{</span>
 
     <span class="token keyword">private</span> <span class="token keyword">static</span> Logger log <span class="token operator">=</span> LoggerFactory<span class="token punctuation">.</span><span class="token function">getLogger</span><span class="token punctuation">(</span>TestController<span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token annotation punctuation">@ResponseBody</span>
     <span class="token annotation punctuation">@RequestMapping</span><span class="token punctuation">(</span>value <span class="token operator">=</span> <span class="token string">"/validator"</span><span class="token punctuation">,</span>method <span class="token operator">=</span> RequestMethod<span class="token punctuation">.</span>POST<span class="token punctuation">)</span>
-    <span class="token keyword">public</span> String <span class="token function">doLogin</span><span class="token punctuation">(</span>HttpServletResponse response<span class="token punctuation">,</span> <span class="token annotation punctuation">@Valid</span> Pojo pojo<span class="token punctuation">)</span> <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>
+    <span class="token keyword">public</span> String <span class="token function">doLogin</span><span class="token punctuation">(</span>HttpServletResponse response<span class="token punctuation">,</span> <span class="token annotation punctuation">@Valid</span> Pojo pojo<span class="token punctuation">)</span> <span class="token punctuation">{</span>
         <span class="token keyword">return</span> <span class="token string">"输入正确"</span><span class="token punctuation">;</span>
-    <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
 
-<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span></code></pre>
+<span class="token punctuation">}</span></code></pre>
 <p>测试结果：</p>
 <p><img src="https://i.loli.net/2020/08/27/oTOsDY7vIf1p5CK.jpg" alt="https://i.loli.net/2020/08/27/oTOsDY7vIf1p5CK.jpg"></p>
 <p><img src="https://i.loli.net/2020/08/27/TM4Pbk2rUBfdNz1.jpg" alt="https://i.loli.net/2020/08/27/TM4Pbk2rUBfdNz1.jpg"></p>
@@ -773,16 +773,16 @@
                     
                         <div class="article-tag">
                             
+                                <a href="/tags/java/">
+                                    <span class="chip bg-color">java</span>
+                                </a>
+                            
                                 <a href="/tags/SpringBoot/">
                                     <span class="chip bg-color">SpringBoot</span>
                                 </a>
                             
                                 <a href="/tags/AOP/">
                                     <span class="chip bg-color">AOP</span>
-                                </a>
-                            
-                                <a href="/tags/java/">
-                                    <span class="chip bg-color">java</span>
                                 </a>
                             
                         </div>
@@ -862,16 +862,16 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/SpringBoot/">
-                        <span class="chip bg-color">SpringBoot</span>
-                    </a>
-                    
                     <a href="/tags/java/">
                         <span class="chip bg-color">java</span>
                     </a>
                     
                     <a href="/tags/mybatis/">
                         <span class="chip bg-color">mybatis</span>
+                    </a>
+                    
+                    <a href="/tags/SpringBoot/">
+                        <span class="chip bg-color">SpringBoot</span>
                     </a>
                     
                     <a href="/tags/%E6%BA%90%E7%A0%81/">

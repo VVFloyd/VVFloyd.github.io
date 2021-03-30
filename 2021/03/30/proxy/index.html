@@ -942,12 +942,12 @@
                         <span class="chip bg-color">java</span>
                     </a>
                     
-                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
-                        <span class="chip bg-color">分布式</span>
-                    </a>
-                    
                     <a href="/tags/%E5%B9%B6%E5%8F%91/">
                         <span class="chip bg-color">并发</span>
+                    </a>
+                    
+                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">
+                        <span class="chip bg-color">分布式</span>
                     </a>
                     
                 </div>
@@ -961,24 +961,27 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/03/30/INSERT_ON_DUPLICATE_KEY_UPDATE/">
+                <a href="/2020/11/25/SoftReference/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="INSERT ... ON DUPLICATE KEY UPDATE产生death lock死锁原理">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="SoftReference">
                         
-                        <span class="card-title">INSERT ... ON DUPLICATE KEY UPDATE产生death lock死锁原理</span>
+                        <span class="card-title">SoftReference</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            今日分享 INSERT … ON DUPLICATE KEY UPDATE产生death lock死锁原理使用场景：对数据库插入某字段，不存在就插入，存在就更新死锁条件：并发条件下对同一条数据进行操作死锁原因：操作流程    ①获取这条记录
+                            
+起因是大佬代码里的jvm缓存使用了软引用，一眼看过去，没有set值的地方，感到困惑。就针对SoftReferenc粗略学习了一番。网上都有哪些balabala就不讲了，直接看代码吧。
+
+以下这段代码，o和o1是同一个对象，但是他们的属性值
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-03-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2020-11-25
                             </span>
                         <span class="publish-author">
                             
@@ -999,12 +1002,12 @@
                         <span class="chip bg-color">java</span>
                     </a>
                     
-                    <a href="/tags/mybatis/">
-                        <span class="chip bg-color">mybatis</span>
+                    <a href="/tags/SoftReference/">
+                        <span class="chip bg-color">SoftReference</span>
                     </a>
                     
-                    <a href="/tags/%E5%B9%B6%E5%8F%91/">
-                        <span class="chip bg-color">并发</span>
+                    <a href="/tags/%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">
+                        <span class="chip bg-color">基本数据类型</span>
                     </a>
                     
                 </div>
