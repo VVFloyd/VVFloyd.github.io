@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="归档: 2021/4, VVFloyd的博客">
+    <meta name="keywords" content="归档: 2021, VVFloyd的博客">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>归档: 2021/4 | VVFloyd的博客</title>
+    <title>归档: 2021 | VVFloyd的博客</title>
     <link rel="icon" type="image/png" href="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -537,39 +537,40 @@
             
             
             <div class="cd-timeline-img month" data-aos="zoom-in-up">
-                <a href="/archives/2021/04">04</a>
+                <a href="/archives/2021/03">03</a>
             </div>
             
 
             
             <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>20</span>
+                <span>30</span>
             </div>
             <article class="cd-timeline-content" data-aos="fade-up">
                 <div class="article col s12 m6">
                     <div class="card">
-                        <a href="/2021/04/20/UnsupportedOperationException/">
+                        <a href="/2021/03/30/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%87%A0%E7%A7%8D%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F/">
                             <div class="card-image">
                                 
                                 
-                                <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="UnsupportedOperationException异常排查">
+                                <img src="/medias/featureimages/2.jpg" class="responsive-img" alt="分布式锁的几种实现方式">
                                 
-                                <span class="card-title">UnsupportedOperationException异常排查</span>
+                                <span class="card-title">分布式锁的几种实现方式</span>
                             </div>
                         </a>
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    
-发现异常的起因是我想删除一个数组中的固定元素，于是把数组转成list,然后调用remove方法。发现抛出UnsupportedOperationException异常。
-
-public class Test {
-    public st
+                                    分布式锁的几种实现方式1.数据库1.1 表记录锁
+搞一张表来记录锁的信息。id（锁住的时间，创建时间，balabala），要加锁时插入数据，释放锁时删除数据。
+1.2 乐观锁
+加版本号。
+1.3 悲观锁
+查询条件后加for update,十
                                 
                             </div>
                             <div class="publish-info">
                                 <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2021-04-20
+                                    <i class="far fa-clock fa-fw icon-date"></i>2021-03-30
                                 </span>
                                 <span class="publish-author">
                                     
@@ -589,196 +590,9 @@ public class Test {
                             
                             <a href="/tags/java/"><span class="chip bg-color">java</span></a>
                             
-                            <a href="/tags/%E5%BC%82%E5%B8%B8/"><span class="chip bg-color">异常</span></a>
+                            <a href="/tags/%E5%B9%B6%E5%8F%91/"><span class="chip bg-color">并发</span></a>
                             
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>14</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2021/04/14/kafka02/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="kafka02（kafka与zookeeper）">
-                                
-                                <span class="card-title">kafka02（kafka与zookeeper）</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    2 kafka与zookeeper还记得1.2.8.4 灾备中做的假设吗？当代理或者消费者挂了，kafka会从备份分区中抓一个崽崽当老大，把挂了的消费者的分区分给其存活的消费者。这种灾备的实现就是利用zk实现的。kafka和zookeepe
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2021-04-14
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/java/" class="post-category">
-                                    java
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/java/"><span class="chip bg-color">java</span></a>
-                            
-                            <a href="/tags/kafka/"><span class="chip bg-color">kafka</span></a>
-                            
-                            <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><span class="chip bg-color">中间件</span></a>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>14</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2021/04/14/kafka01/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="kafka01（基本概念）">
-                                
-                                <span class="card-title">kafka01（基本概念）</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    今天试着把之前学习的有关kafka的知识总结一下。
-1. kafka里几个基本的概念首先kafka是用来叽里呱啦的，为了批量同步数据呀、削峰呀balabala的，本质是生产者消费者模式。kafka和其他常见的消息队列有些概念和实现上的不同，
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2021-04-14
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/java/" class="post-category">
-                                    java
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/java/"><span class="chip bg-color">java</span></a>
-                            
-                            <a href="/tags/kafka/"><span class="chip bg-color">kafka</span></a>
-                            
-                            <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/"><span class="chip bg-color">中间件</span></a>
-                            
-                        </div>
-                        
-                    </div>
-                </div>
-            </article>
-        </div>
-        
-        <div class="cd-timeline-block">
-
-            
-            
-
-            
-            
-
-            
-            <div class="cd-timeline-img day" data-aos="zoom-in-up">
-                <span>12</span>
-            </div>
-            <article class="cd-timeline-content" data-aos="fade-up">
-                <div class="article col s12 m6">
-                    <div class="card">
-                        <a href="/2021/04/12/%E4%BB%A5%E5%89%8D%E7%AB%AF%E6%8C%87%E5%AE%9A%E7%9A%84model%E4%B8%BA%E8%BF%94%E5%9B%9E%E5%80%BC/">
-                            <div class="card-image">
-                                
-                                
-                                <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="以前端指定的model为返回值">
-                                
-                                <span class="card-title">以前端指定的model为返回值</span>
-                            </div>
-                        </a>
-                        <div class="card-content article-content">
-                            <div class="summary block-with-text">
-                                
-                                    
-起因是想写一个通用的方法，在访问固定结构的表（一般是配置表）时，可以返回对应的model.写个通用的方法，每当新增需求的时候加个model就好了，不用重复开发。蓝鹅这个方案被否定了，原因是大佬认为反射性能不高，尽量少使用。于是谨在此记录一
-                                
-                            </div>
-                            <div class="publish-info">
-                                <span class="publish-date">
-                                    <i class="far fa-clock fa-fw icon-date"></i>2021-04-12
-                                </span>
-                                <span class="publish-author">
-                                    
-                                    <i class="fas fa-bookmark fa-fw icon-category"></i>
-                                    
-                                    <a href="/categories/java/" class="post-category">
-                                    java
-                                    </a>
-                                    
-                                    
-                                </span>
-                            </div>
-                        </div>
-
-                        
-                        <div class="card-action article-tags">
-                            
-                            <a href="/tags/java/"><span class="chip bg-color">java</span></a>
-                            
-                            <a href="/tags/%E5%8F%8D%E5%B0%84/"><span class="chip bg-color">反射</span></a>
+                            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/"><span class="chip bg-color">分布式</span></a>
                             
                         </div>
                         
@@ -790,6 +604,30 @@ public class Test {
     </div>
 
 </main>
+
+
+<div class="container paging">
+    <div class="row">
+        <div class="col s6 m4 l4">
+            
+            <a href="/archives/2021/"
+               class="left btn-floating btn-large waves-effect waves-light bg-color">
+                <i class="fas fa-angle-left"></i>
+            </a>
+            
+        </div>
+        <div class="page-info col m4 l4 hide-on-small-only">
+            <div class="center-align b-text-gray">2 / 2</div>
+        </div>
+        <div class="col s6 m4 l4">
+            
+            <a class="right btn-floating btn-large disabled">
+                <i class="fas fa-angle-right"></i>
+            </a>
+            
+        </div>
+    </div>
+</div>
 
 
 

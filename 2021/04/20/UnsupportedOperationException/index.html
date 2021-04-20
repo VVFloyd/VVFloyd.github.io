@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="kafka02（kafka与zookeeper）, VVFloyd的博客">
+    <meta name="keywords" content="UnsupportedOperationException异常排查, VVFloyd的博客">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>kafka02（kafka与zookeeper） | VVFloyd的博客</title>
+    <title>UnsupportedOperationException异常排查 | VVFloyd的博客</title>
     <link rel="icon" type="image/png" href="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -393,12 +393,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">kafka02（kafka与zookeeper）</h1>
+                    <h1 class="description center-align post-title">UnsupportedOperationException异常排查</h1>
                 </div>
             </div>
         </div>
@@ -519,12 +519,8 @@
                                 <span class="chip bg-color">java</span>
                             </a>
                         
-                            <a href="/tags/kafka/">
-                                <span class="chip bg-color">kafka</span>
-                            </a>
-                        
-                            <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">
-                                <span class="chip bg-color">中间件</span>
+                            <a href="/tags/%E5%BC%82%E5%B8%B8/">
+                                <span class="chip bg-color">异常</span>
                             </a>
                         
                     </div>
@@ -548,7 +544,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2021-04-14
+                    2021-04-20
                 </div>
                 
 
@@ -564,12 +560,132 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="2-kafka与zookeeper"><a href="#2-kafka与zookeeper" class="headerlink" title="2 kafka与zookeeper"></a>2 kafka与zookeeper</h2><p>还记得1.2.8.4 灾备中做的假设吗？当代理或者消费者挂了，kafka会从备份分区中抓一个崽崽当老大，把挂了的消费者的分区分给其存活的消费者。<br>这种灾备的实现就是利用zk实现的。<br>kafka和zookeeper到底是什么关系?为什么用kafka一定要zk？为啥最新版的又去掉zk了？<br>这篇文章我们就来一起探讨一下。</p>
-<h3 id="2-1-kafka在zookeeper中存储的数据结构"><a href="#2-1-kafka在zookeeper中存储的数据结构" class="headerlink" title="2.1 kafka在zookeeper中存储的数据结构"></a>2.1 kafka在zookeeper中存储的数据结构</h3><p><img src="https://i.loli.net/2021/04/14/iN4FKEYrUlIsWLt.png"><br>zookeeper的数据结构是树形结构，节点分为永久、临时balabala的，kafka巧妙利用了其中的临时节点，来存储各个broker和consumer的信息。</p>
-<h3 id="2-2-consumer"><a href="#2-2-consumer" class="headerlink" title="2.2 consumer"></a>2.2 consumer</h3><p>consumer是在zk下面写入每个消费者，kafka在每个节点上注册监听watch，哪个挂了，立马触发rebalance.</p>
-<h3 id="2-3-brokers"><a href="#2-3-brokers" class="headerlink" title="2.3 brokers"></a>2.3 brokers</h3><p>brokers下面挂着分区，每一个备份分区监听leader分区，kafka监听所有分区。一方面定期将leader数据同步给follower，另一方面时刻监听leader的健康。</p>
-<h3 id="2-4-负载均衡"><a href="#2-4-负载均衡" class="headerlink" title="2.4 负载均衡"></a>2.4 负载均衡</h3><p>kafka实现负载均衡有两种方式，一种是四层负载均衡，其原理是一个生产者对应一个分区。但是这样的实现不太完美，因为每个topic、生产者、分区的量不一定一样。<br>这就导致有的broker压力会比较大，有些会比较小。<br>另一种方式是使用zookeeper实现负载均衡。因为broker注册到zk上了，所以kafka可以动态感知每个分区的使用比率，从而实现实时动态分配生产者到broker的对应关系。</p>
-<p>其实我看过一篇博文，画了几张注册监听的树状图，但是我找不到了呜呜呜~大致就是上面文字描述的这个意思。<br>如果只是简单理解zk和kafka的关系，理解到这个程度大概也马马虎虎了。新版的kafka不再需要zk,是因为用zk维护这些关系，第一是比较重，第二是zk也是单独部署的，zk挂了也是有风险的。<br>其实在kafka之前的版本就有在尝试摆脱zk了。<br>为了避免因 Consumer 故障、重启、Rebalance 等原因造成重复消费、遗漏消费消息，需要记录 Consumer 对 Partition 中消息的消费进度，即偏移量 Offset。<br>Offset 在 ZooKeeper 中，有一个专属的节点（目录）用于记录 Offset，其路径样式如下：<br>/consumers/[group_id]/offsets/[topic]/[broker_id-partition_id]<br>注意嗷，这个是保存在消费者的节点下的，其他消息队列一般是存在相当于broker的角色里的。存在消费者下，各自管各自的索引，比存在服务器更好。服务器还要记录是哪个组里哪个消费者，然后还要同步索引巴拉巴拉。<br>由此可见，offset的记录本身就是深思熟虑的结构。蓝鹅在 Kafka 2.0 中，Offset 信息不再记录于 ZooKeeper，而是保存于 Kafka 的 Topic 中，路径如下：<br>__consumer_offsets(/brokers/topics/__consumer_offsets)<br>这就体现了kafka在试图摆脱zk，而且还有把一些信息存入一个指定的topic中balabala的，有兴趣的读者可以自行了解啾咪</p>
+                <blockquote>
+<p>发现异常的起因是我想删除一个数组中的固定元素，于是把数组转成list,然后调用remove方法。发现抛出UnsupportedOperationException异常。</p>
+</blockquote>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Test</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+        String showType<span class="token operator">=</span><span class="token string">"a|b|c"</span><span class="token punctuation">;</span>
+        String<span class="token punctuation">[</span><span class="token punctuation">]</span> showTypes<span class="token punctuation">;</span>
+
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>showType<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span><span class="token string">"|"</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+
+            showTypes <span class="token operator">=</span> showType<span class="token punctuation">.</span><span class="token function">split</span><span class="token punctuation">(</span><span class="token string">"\\|"</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+            showTypes <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">{</span>showType<span class="token punctuation">}</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        List<span class="token operator">&lt;</span>String<span class="token operator">></span> list <span class="token operator">=</span> Arrays<span class="token punctuation">.</span><span class="token function">asList</span><span class="token punctuation">(</span>showTypes<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        list<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>看一下报错的堆栈信息<br>Exception in thread “main” java.lang.UnsupportedOperationException<br>    at java.util.AbstractList.remove(AbstractList.java:161)<br>    at java.util.AbstractList$Itr.remove(AbstractList.java:374)<br>    at java.util.AbstractCollection.remove(AbstractCollection.java:293)</p>
+<p>AbstractList.java:161如下：<br>public E remove(int index) {<br>        throw new UnsupportedOperationException();<br>    }</p>
+<p>AbstractList的修改操作都会抛出UnsupportedOperationException异常。<br>但是平时我们对集合类使用remove操作不会抛出这个异常，是因为ArrayList,List都实现了remove、add这些方法。</p>
+<p>Array.adList返回的是ArrayList,那为什么会报错呢？<br>看一下源码：<br>public static <t> List<t> asList(T… a) {<br>        return new ArrayList&lt;&gt;(a);<br>    }</t></t></p>
+<p>点进这个ArrayList，发现原来是Array这个类里维护了一个静态内部类ArrayList<e>，这个类没有实现这些修改方法。</e></p>
+<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">/**
+     * @serial include
+     */</span>
+    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">ArrayList</span><span class="token operator">&lt;</span>E<span class="token operator">></span> <span class="token keyword">extends</span> <span class="token class-name">AbstractList</span><span class="token operator">&lt;</span>E<span class="token operator">></span>
+        <span class="token keyword">implements</span> <span class="token class-name">RandomAccess</span><span class="token punctuation">,</span> java<span class="token punctuation">.</span>io<span class="token punctuation">.</span>Serializable
+    <span class="token punctuation">{</span>
+        <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">final</span> <span class="token keyword">long</span> serialVersionUID <span class="token operator">=</span> <span class="token operator">-</span>2764017481108945198L<span class="token punctuation">;</span>
+        <span class="token keyword">private</span> <span class="token keyword">final</span> E<span class="token punctuation">[</span><span class="token punctuation">]</span> a<span class="token punctuation">;</span>
+
+        <span class="token function">ArrayList</span><span class="token punctuation">(</span>E<span class="token punctuation">[</span><span class="token punctuation">]</span> array<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            a <span class="token operator">=</span> Objects<span class="token punctuation">.</span><span class="token function">requireNonNull</span><span class="token punctuation">(</span>array<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> a<span class="token punctuation">.</span>length<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> Object<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">toArray</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> a<span class="token punctuation">.</span><span class="token function">clone</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token annotation punctuation">@SuppressWarnings</span><span class="token punctuation">(</span><span class="token string">"unchecked"</span><span class="token punctuation">)</span>
+        <span class="token keyword">public</span> <span class="token operator">&lt;</span>T<span class="token operator">></span> T<span class="token punctuation">[</span><span class="token punctuation">]</span> <span class="token function">toArray</span><span class="token punctuation">(</span>T<span class="token punctuation">[</span><span class="token punctuation">]</span> a<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">int</span> size <span class="token operator">=</span> <span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>length <span class="token operator">&lt;</span> size<span class="token punctuation">)</span>
+                <span class="token keyword">return</span> Arrays<span class="token punctuation">.</span><span class="token function">copyOf</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">,</span> size<span class="token punctuation">,</span>
+                                     <span class="token punctuation">(</span>Class<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">extends</span> <span class="token class-name">T</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">></span><span class="token punctuation">)</span> a<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            System<span class="token punctuation">.</span><span class="token function">arraycopy</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> a<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> size<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">.</span>length <span class="token operator">></span> size<span class="token punctuation">)</span>
+                a<span class="token punctuation">[</span>size<span class="token punctuation">]</span> <span class="token operator">=</span> null<span class="token punctuation">;</span>
+            <span class="token keyword">return</span> a<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> E <span class="token function">get</span><span class="token punctuation">(</span><span class="token keyword">int</span> index<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> a<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> E <span class="token function">set</span><span class="token punctuation">(</span><span class="token keyword">int</span> index<span class="token punctuation">,</span> E element<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            E oldValue <span class="token operator">=</span> a<span class="token punctuation">[</span>index<span class="token punctuation">]</span><span class="token punctuation">;</span>
+            a<span class="token punctuation">[</span>index<span class="token punctuation">]</span> <span class="token operator">=</span> element<span class="token punctuation">;</span>
+            <span class="token keyword">return</span> oldValue<span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">int</span> <span class="token function">indexOf</span><span class="token punctuation">(</span>Object o<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            E<span class="token punctuation">[</span><span class="token punctuation">]</span> a <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">;</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>o <span class="token operator">==</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> a<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">==</span> null<span class="token punctuation">)</span>
+                        <span class="token keyword">return</span> i<span class="token punctuation">;</span>
+            <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> a<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
+                    <span class="token keyword">if</span> <span class="token punctuation">(</span>o<span class="token punctuation">.</span><span class="token function">equals</span><span class="token punctuation">(</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+                        <span class="token keyword">return</span> i<span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">return</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">boolean</span> <span class="token function">contains</span><span class="token punctuation">(</span>Object o<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token function">indexOf</span><span class="token punctuation">(</span>o<span class="token punctuation">)</span> <span class="token operator">!=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> Spliterator<span class="token operator">&lt;</span>E<span class="token operator">></span> <span class="token function">spliterator</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> Spliterators<span class="token punctuation">.</span><span class="token function">spliterator</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> Spliterator<span class="token punctuation">.</span>ORDERED<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">forEach</span><span class="token punctuation">(</span>Consumer<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">super</span> E<span class="token operator">></span> action<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Objects<span class="token punctuation">.</span><span class="token function">requireNonNull</span><span class="token punctuation">(</span>action<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span>E e <span class="token operator">:</span> a<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                action<span class="token punctuation">.</span><span class="token function">accept</span><span class="token punctuation">(</span>e<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">replaceAll</span><span class="token punctuation">(</span>UnaryOperator<span class="token operator">&lt;</span>E<span class="token operator">></span> operator<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Objects<span class="token punctuation">.</span><span class="token function">requireNonNull</span><span class="token punctuation">(</span>operator<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            E<span class="token punctuation">[</span><span class="token punctuation">]</span> a <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">.</span>a<span class="token punctuation">;</span>
+            <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> a<span class="token punctuation">.</span>length<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                a<span class="token punctuation">[</span>i<span class="token punctuation">]</span> <span class="token operator">=</span> operator<span class="token punctuation">.</span><span class="token function">apply</span><span class="token punctuation">(</span>a<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">sort</span><span class="token punctuation">(</span>Comparator<span class="token operator">&lt;</span><span class="token operator">?</span> <span class="token keyword">super</span> E<span class="token operator">></span> c<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Arrays<span class="token punctuation">.</span><span class="token function">sort</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span> c<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre>
+<p>知道了原因，就可以进行解决了。只要把这个集合传入ArrayList的构造函数就可以了~</p>
+<pre class=" language-java"><code class="language-java">        List<span class="token operator">&lt;</span>String<span class="token operator">></span> list2 <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token operator">&lt;</span>String<span class="token operator">></span><span class="token punctuation">(</span>Arrays<span class="token punctuation">.</span><span class="token function">asList</span><span class="token punctuation">(</span>showTypes<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        list2<span class="token punctuation">.</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token string">"a"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        String<span class="token punctuation">[</span><span class="token punctuation">]</span> array <span class="token operator">=</span> list2<span class="token punctuation">.</span><span class="token function">toArray</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span>list2<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+<p>完成嗷┗|｀O′|┛ 嗷</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -627,12 +743,8 @@
                                     <span class="chip bg-color">java</span>
                                 </a>
                             
-                                <a href="/tags/kafka/">
-                                    <span class="chip bg-color">kafka</span>
-                                </a>
-                            
-                                <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/">
-                                    <span class="chip bg-color">中间件</span>
+                                <a href="/tags/%E5%BC%82%E5%B8%B8/">
+                                    <span class="chip bg-color">异常</span>
                                 </a>
                             
                         </div>
@@ -674,9 +786,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2021/04/20/UnsupportedOperationException/">
                     <div class="card-image">
@@ -698,9 +811,9 @@ public class Test {
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-04-20
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-20
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -713,6 +826,7 @@ public class Test {
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -735,20 +849,19 @@ public class Test {
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/04/14/kafka01/">
+                <a href="/2021/04/14/kafka02/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="kafka01（基本概念）">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="kafka02（kafka与zookeeper）">
                         
-                        <span class="card-title">kafka01（基本概念）</span>
+                        <span class="card-title">kafka02（kafka与zookeeper）</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            今天试着把之前学习的有关kafka的知识总结一下。
-1. kafka里几个基本的概念首先kafka是用来叽里呱啦的，为了批量同步数据呀、削峰呀balabala的，本质是生产者消费者模式。kafka和其他常见的消息队列有些概念和实现上的不同，
+                            2 kafka与zookeeper还记得1.2.8.4 灾备中做的假设吗？当代理或者消费者挂了，kafka会从备份分区中抓一个崽崽当老大，把挂了的消费者的分区分给其存活的消费者。这种灾备的实现就是利用zk实现的。kafka和zookeepe
                         
                     </div>
                     <div class="publish-info">
