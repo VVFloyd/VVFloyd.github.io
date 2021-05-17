@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="缓存穿透&amp;布隆过滤器, VVFloyd的博客">
+    <meta name="keywords" content="三种线程创建方式及区别, VVFloyd的博客">
     <meta name="description" content="">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -16,7 +16,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>缓存穿透&amp;布隆过滤器 | VVFloyd的博客</title>
+    <title>三种线程创建方式及区别 | VVFloyd的博客</title>
     <link rel="icon" type="image/png" href="https://i.loli.net/2020/08/20/4Q6V9ANPY3xFkrJ.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
@@ -393,12 +393,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/22.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">缓存穿透&amp;布隆过滤器</h1>
+                    <h1 class="description center-align post-title">三种线程创建方式及区别</h1>
                 </div>
             </div>
         </div>
@@ -519,8 +519,8 @@
                                 <span class="chip bg-color">java</span>
                             </a>
                         
-                            <a href="/tags/redis/">
-                                <span class="chip bg-color">redis</span>
+                            <a href="/tags/java%E5%9F%BA%E7%A1%80/">
+                                <span class="chip bg-color">java基础</span>
                             </a>
                         
                     </div>
@@ -544,7 +544,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2021-04-25
+                    2021-05-17
                 </div>
                 
 
@@ -560,110 +560,96 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="1-缓存穿透"><a href="#1-缓存穿透" class="headerlink" title="1. 缓存穿透"></a>1. 缓存穿透</h2><p>   key对应的数据在数据源并不存在，每次针对此key的请求从缓存获取不到，请求都会到数据源，从而可能压垮数据源。比如用一个不存在的用户id获取用户信息，不论缓存还是数据库都没有，若黑客利用此漏洞进行攻击可能压垮数据库。 </p>
-<p>   解决方法：缓存null值；布隆过滤器</p>
-<h3 id="1-1-缓存null值"><a href="#1-1-缓存null值" class="headerlink" title="1.1. 缓存null值"></a>1.1. 缓存null值</h3><pre class=" language-java"><code class="language-java"> <span class="token annotation punctuation">@Override</span>
-    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">getNullFromDB</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token comment" spellcheck="true">//searchKey模拟入参</span>
-        String searchKey<span class="token operator">=</span>null<span class="token punctuation">;</span>
-        Object o <span class="token operator">=</span> redisUtil<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span>searchKey<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>o<span class="token operator">!=</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
-            <span class="token comment" spellcheck="true">//缓存有数据，返回</span>
-            <span class="token keyword">return</span><span class="token punctuation">;</span>
+                <blockquote>
+<p>起因：昨天刷B站的时候看到一个推荐视频，内容是月薪一万六面试实录。所及内容多为基础，但是其中有个问题却难到了我，问的是线程创建的三种方式。<br>平时工作中多以 executorService.execute(() -&gt; {}); 的方式，利用线程池创建，于基础却忘得一干二净。于是今日来补一补。</p>
+</blockquote>
+<h3 id="1-Thread-Runnable"><a href="#1-Thread-Runnable" class="headerlink" title="1.Thread,Runnable"></a>1.Thread,Runnable</h3><p>首先來看Runnable,基础用法如下:</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">RunnableTest</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RunnableDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">RunnableDemo</span> <span class="token keyword">implements</span> <span class="token class-name">Runnable</span><span class="token punctuation">{</span>
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"hahaha~"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token punctuation">}</span>
-        <span class="token comment" spellcheck="true">//随便找个表，模拟查询为空</span>
-        BArticle bArticle <span class="token operator">=</span> bArticleMapper<span class="token punctuation">.</span><span class="token function">selectByPrimaryKey</span><span class="token punctuation">(</span>null<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment" spellcheck="true">//不论是不是空，都放到缓存里。当然如果做得精细，null的缓存时间可以短一点</span>
-        redisUtil<span class="token punctuation">.</span><span class="token function">set</span><span class="token punctuation">(</span>searchKey<span class="token punctuation">,</span>bArticle<span class="token punctuation">,</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>bArticle<span class="token operator">!=</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
-            <span class="token comment" spellcheck="true">//其他业务</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>再來看Thread,基础用法如下：</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">ThreadTest</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">new</span> <span class="token class-name">ThreadDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">ThreadDemo</span> <span class="token keyword">extends</span> <span class="token class-name">Thread</span><span class="token punctuation">{</span>
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+            System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"hahaha~"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>可见，这两种方式是十分相似的，唯一的区别是runnable需要调用thread的构造方法：<br>public Thread(Runnable target) {<br>        init(null, target, “Thread-“ + nextThreadNum(), 0);<br>    }<br>来创建thread.进而调用他的start方法。</p>
+<p>那runnable和thread真正的区别是什么呢？<br>答：本质上没有区别。因为thread其实是runnable的实现类，前者封装了后者。单独使用runnable，依旧要传入thread的构造函数来调用。</p>
+<p>我们来看thread的源码</p>
+<pre class=" language-java"><code class="language-java"><span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>target <span class="token operator">!=</span> null<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            target<span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token punctuation">}</span>
     <span class="token punctuation">}</span></code></pre>
-<h3 id="1-2-布隆过滤器"><a href="#1-2-布隆过滤器" class="headerlink" title="1.2. 布隆过滤器"></a>1.2. 布隆过滤器</h3><h4 id="1-2-1-简单理解"><a href="#1-2-1-简单理解" class="headerlink" title="1.2.1. 简单理解"></a>1.2.1. 简单理解</h4><p>   布隆过滤器的原理是，把所有可能存在缓存里的key，存到布隆过滤器里。每次查询前先去过滤器里面看看，如果有，再去查询，没有直接就返回了。这样就能避免黑客制造一些一定不存在的key，去攻击缓存。缓存落空后就会查询数据库，从而起到攻击数据库的作用。</p>
-<p>   所以，如果不深究实现，可以假想布隆过滤器是一个set，set里有值，才去查数据执行逻辑，没值查都不差直接拒绝。</p>
-<h4 id="1-2-2-数据结构"><a href="#1-2-2-数据结构" class="headerlink" title="1.2.2. 数据结构"></a>1.2.2. 数据结构</h4><p>   但是布隆过滤器显然不是用set,否则将造成大量的空间浪费。</p>
-<p>   布隆过滤器听起来高大上，但是本质上其实是一个bit数组（顺便回顾一下，&nbsp;<em>java</em>基本类型的<em>长度</em>&nbsp;<em>bit</em>:位,一个二进制数据(0或者1) ），初始值全部都是0。</p>
-<p>   布隆过滤器的实现就是用特定的算法，把入参的key（举例是baidu），通过算法算出几个值（结果可能是12，888，2934），然后把这三个索引位置的值置为1.下次查询时，再传入baidu,分解后变成12，888，2934，过滤器去这三个位置一看，都是1，那么就认为baidu这个key是存在的。</p>
-<h4 id="1-2-3-造成误判的原因"><a href="#1-2-3-造成误判的原因" class="headerlink" title="1.2.3. 造成误判的原因"></a>1.2.3. 造成误判的原因</h4><p>   特别注意的是，布隆过滤器实现的功能实际上是可以用来告诉你&nbsp;<strong>“某样东西一定不存在或者可能存在”</strong>。 </p>
-<p>   过滤器说baidu不存在，那他一定不存在，但是他说baidu存在，其实不一定存在。为啥会这样呢，举个栗子：</p>
-<ol>
-<li><p>数据库A表里有三个值：baidu,kugou,sougou.</p>
-</li>
-<li><p>我把这三个值放进redis里，同时放进布隆过滤器。</p>
-</li>
-<li><p>布隆过滤器存baidu,算法算出位置是12，888，2934，均置为1.</p>
-</li>
-<li><p>布隆过滤器存kugou,算法算出位置是65，777，988，均置为1.</p>
-</li>
-<li><p>布隆过滤器存sougou,算法算出位置是432，1777，2988，均置为1.</p>
-</li>
-<li><p>用户查询baidu,kugou,sougou都在过滤器里，ok没问题。</p>
-</li>
-<li><p>恶意用户查询tencent,布隆过滤器算法算出位置是12，777，3777.检查这前两个位置都是1，第三个是0，布隆过滤不通过，过滤正常。</p>
-</li>
-<li><p>恶意用户查询google,布隆过滤器算法算出位置是12，777，1777.检查这三个位置都是1，布隆过滤通过，误判。</p>
-<p>布隆过滤器的误差是由这个数组的大小决定的，数组越大，算法越精确，经过hash运算和重合的概率越小。过小的布隆过滤器很快所有的 bit 位均为 1，那么查询任何值都会返回“可能存在”，起不到过滤的目的了。布隆过滤器的长度会直接影响误报率，布隆过滤器越长其误报率越小。 即使过滤器不够大，对于这种恶意攻击也起到了一定的过滤作用，这种误差是可以接受的。</p>
-<p>看不懂的看这个<a href="https://zhuanlan.zhihu.com/p/43263751%EF%BC%8C%E6%9C%89%E5%9B%BE%EF%BC%8C%E5%A5%BD%E9%A1%B6%E8%B5%9E%E3%80%82" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/43263751，有图，好顶赞。</a></p>
-</li>
-</ol>
-<h4 id="1-2-4-代码举例"><a href="#1-2-4-代码举例" class="headerlink" title="1.2.4. 代码举例"></a>1.2.4. 代码举例</h4><pre class=" language-xml"><code class="language-xml"><span class="token comment" spellcheck="true">&lt;!--布隆过滤器--></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
-            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>com.google.guava<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
-            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>guava<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
-            <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>version</span><span class="token punctuation">></span></span>25.1-jre<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>version</span><span class="token punctuation">></span></span>
-        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span></code></pre>
-<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">/**
- * 布隆过滤器测试类
- * @author vvf
- */</span>
-<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">BloomFliterDemo</span> <span class="token punctuation">{</span>
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">int</span> size <span class="token operator">=</span> <span class="token number">1000000</span><span class="token punctuation">;</span>
+<p>可见thread其实是调用了target的run方法，而target正是runnable.</p>
+<p>/* What will be run. */<br>private Runnable target;</p>
+<p>在单独使用tread时，往往重写了run方法，才导致我们看不到runnable的影子。</p>
+<p>有一种论调是“Runnable更容易可以实现多个线程间的资源共享，而Thread不可以”，但是这种观点是错误的。参考链接：<a href="https://blog.csdn.net/zhaojianting/article/details/97664370" target="_blank" rel="noopener">https://blog.csdn.net/zhaojianting/article/details/97664370</a></p>
+<p>改造一下我们的栗子也可以证明，这不过是由于是否是同一个对象引起的问题。</p>
+<pre class=" language-java"><code class="language-java">    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RunnableDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">RunnableDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> BloomFilter<span class="token operator">&lt;</span>Integer<span class="token operator">></span> bloomFilter <span class="token operator">=</span> BloomFilter<span class="token punctuation">.</span><span class="token function">create</span><span class="token punctuation">(</span>Funnels<span class="token punctuation">.</span><span class="token function">integerFunnel</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> size<span class="token punctuation">)</span><span class="token punctuation">;</span>
-
-    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> size<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            bloomFilter<span class="token punctuation">.</span><span class="token function">put</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-        <span class="token comment" spellcheck="true">//落在过滤器中的情况</span>
-        <span class="token function">inBloom</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment" spellcheck="true">//误判的情况</span>
-        <span class="token function">outBloom</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        RunnableDemo runnableDemo <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">RunnableDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span>runnableDemo<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span>runnableDemo<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
 
     <span class="token punctuation">}</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">outBloom</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        List<span class="token operator">&lt;</span>Integer<span class="token operator">></span> list <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">ArrayList</span><span class="token operator">&lt;</span>Integer<span class="token operator">></span><span class="token punctuation">(</span><span class="token number">1000</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment" spellcheck="true">// 故意取10000个不在过滤器里的值，看看有多少个会被认为在过滤器里</span>
-        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> size <span class="token operator">+</span> <span class="token number">10000</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> size <span class="token operator">+</span> <span class="token number">20000</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            <span class="token keyword">if</span> <span class="token punctuation">(</span>bloomFilter<span class="token punctuation">.</span><span class="token function">mightContain</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-                list<span class="token punctuation">.</span><span class="token function">add</span><span class="token punctuation">(</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
-            <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">RunnableDemo</span> <span class="token keyword">implements</span> <span class="token class-name">Runnable</span><span class="token punctuation">{</span>
+        <span class="token keyword">private</span> <span class="token keyword">int</span> ticket <span class="token operator">=</span> <span class="token number">5</span><span class="token punctuation">;</span>
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"hahaha~"</span><span class="token operator">+</span>ticket<span class="token operator">--</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         <span class="token punctuation">}</span>
-        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"误判的数量："</span> <span class="token operator">+</span> list<span class="token punctuation">.</span><span class="token function">size</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span></code></pre>
+<h3 id="2-Callable"><a href="#2-Callable" class="headerlink" title="2. Callable"></a>2. Callable</h3><p>再来看看Callable.</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CallableTest</span> <span class="token punctuation">{</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> ExecutionException<span class="token punctuation">,</span> InterruptedException <span class="token punctuation">{</span>
+        FutureTask<span class="token operator">&lt;</span>String<span class="token operator">></span> stringFutureTask <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">FutureTask</span><span class="token operator">&lt;</span><span class="token operator">></span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">CallableDemo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">new</span> <span class="token class-name">Thread</span><span class="token punctuation">(</span>stringFutureTask<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">//获取结果</span>
+        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>stringFutureTask<span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">}</span>
 
-    <span class="token keyword">private</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">inBloom</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-        <span class="token comment" spellcheck="true">// 获取开始时间</span>
-        <span class="token keyword">long</span> startTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">nanoTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token comment" spellcheck="true">//判断这一百万个数中是否包含29999这个数</span>
-        <span class="token keyword">if</span> <span class="token punctuation">(</span>bloomFilter<span class="token punctuation">.</span><span class="token function">mightContain</span><span class="token punctuation">(</span><span class="token number">29999</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
-            System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"命中了"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-        <span class="token comment" spellcheck="true">// 获取结束时间</span>
-        <span class="token keyword">long</span> endTime <span class="token operator">=</span> System<span class="token punctuation">.</span><span class="token function">nanoTime</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"程序运行时间： "</span> <span class="token operator">+</span> <span class="token punctuation">(</span>endTime <span class="token operator">-</span> startTime<span class="token punctuation">)</span> <span class="token operator">+</span> <span class="token string">"纳秒"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">class</span> <span class="token class-name">CallableDemo</span> <span class="token keyword">implements</span> <span class="token class-name">Callable</span><span class="token operator">&lt;</span>String<span class="token operator">></span> <span class="token punctuation">{</span>
 
-<span class="token punctuation">}</span>
-</code></pre>
-<h4 id="1-2-5-移除元素"><a href="#1-2-5-移除元素" class="headerlink" title="1.2.5. 移除元素"></a>1.2.5. 移除元素</h4><p>   理论上是不允许的，因为每个位置可能被多个元素共用，删除一个可能会影响其他元素。当然解决方法也是有的。有以下几种解决方法：</p>
-<p>   1）对于关小黑屋再放出来这种需求，我们可以换一个思路，再加一个布隆过滤器。在A过滤器中存在的数据，再去B过滤器中瞅瞅，B中也有，那视为实际上没有。</p>
-<p>   2）如果是redis实现的布隆过滤器（Redis本身就支持bitmap这种数据结构，通过setbit和getbit即可实现一个Bloom Filter ），设个过期时间就可以删除对应的元素。这种实现类似于强行删除，感觉并不太好。</p>
-<p>   3）名为 Counting Bloom filter 的变种可以用来测试元素计数个数是否绝对小于某个阈值，它支持元素删除。可以参考文章&nbsp;<a href="https://link.zhihu.com/?target=https://cloud.tencent.com/developer/article/1136056">Counting Bloom Filter 的原理和实现</a> 。CBF在本身数组上加了一位，用来计数。没次把指定索引位由0改成1时，count加1，每次删除时count减1.</p>
-<blockquote>
-<p> 结尾OS：布隆过滤器在项目中有用到，但是还是用的少，而且不久之后就被取缔了。一个是因为使用场景还是相对少，另一个是因为习惯上往往能通过结构优化解决的，就不用这个了。我也不知道这种对于技术的保守是谨慎负责还是矫枉过正ㄟ( ▔, ▔ )ㄏ<br> 电脑卡关机了呜呜呜还好typora有备份，我永远喜欢typora嘤嘤嘤（＞人＜；）</p>
-</blockquote>
+        <span class="token annotation punctuation">@Override</span>
+        <span class="token keyword">public</span> String <span class="token function">call</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> Exception <span class="token punctuation">{</span>
+            <span class="token keyword">return</span> <span class="token string">"hahaha~"</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre>
+<p>可见，callable同样需要thread包装，FutureTask继承了runnable.callable可以获取结果。<br>因为callable的返回值是在未来执行返回的，所以别忘了给get方法设置一个超时时间。</p>
+<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">//源码</span>
+<span class="token keyword">public</span> V <span class="token function">get</span><span class="token punctuation">(</span><span class="token keyword">long</span> timeout<span class="token punctuation">,</span> TimeUnit unit<span class="token punctuation">)</span>
+        <span class="token keyword">throws</span> InterruptedException<span class="token punctuation">,</span> ExecutionException<span class="token punctuation">,</span> TimeoutException <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>unit <span class="token operator">==</span> null<span class="token punctuation">)</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">NullPointerException</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">int</span> s <span class="token operator">=</span> state<span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>s <span class="token operator">&lt;=</span> COMPLETING <span class="token operator">&amp;&amp;</span>
+            <span class="token punctuation">(</span>s <span class="token operator">=</span> <span class="token function">awaitDone</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">,</span> unit<span class="token punctuation">.</span><span class="token function">toNanos</span><span class="token punctuation">(</span>timeout<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token operator">&lt;=</span> COMPLETING<span class="token punctuation">)</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">TimeoutException</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> <span class="token function">report</span><span class="token punctuation">(</span>s<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span></code></pre>
+<p>callable使用的常见不多，往往要求在主线程中需要执行比较耗时的操作时，但又不想阻塞主线程时，可以把这些作业交给Future对象在后台完成，当主线程将来需要时，就可以通过Future对象获得后台作业的计算结果或者执行状态。</p>
 <script>
         document.querySelectorAll('.github-emoji')
           .forEach(el => {
@@ -721,8 +707,8 @@
                                     <span class="chip bg-color">java</span>
                                 </a>
                             
-                                <a href="/tags/redis/">
-                                    <span class="chip bg-color">redis</span>
+                                <a href="/tags/java%E5%9F%BA%E7%A1%80/">
+                                    <span class="chip bg-color">java基础</span>
                                 </a>
                             
                         </div>
@@ -764,9 +750,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2021/05/17/%E4%B8%89%E7%A7%8D%E7%BA%BF%E7%A8%8B%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F%E5%8F%8A%E5%8C%BA%E5%88%AB/">
                     <div class="card-image">
@@ -785,9 +772,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2021-05-17
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-05-17
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
@@ -800,6 +787,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -822,28 +810,25 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2021/04/20/UnsupportedOperationException/">
+                <a href="/2021/04/25/%E7%BC%93%E5%AD%98%E7%A9%BF%E9%80%8F&%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="UnsupportedOperationException异常排查">
+                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="缓存穿透&amp;布隆过滤器">
                         
-                        <span class="card-title">UnsupportedOperationException异常排查</span>
+                        <span class="card-title">缓存穿透&amp;布隆过滤器</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            
-发现异常的起因是我想删除一个数组中的固定元素，于是把数组转成list,然后调用remove方法。发现抛出UnsupportedOperationException异常。
+                            1. 缓存穿透   key对应的数据在数据源并不存在，每次针对此key的请求从缓存获取不到，请求都会到数据源，从而可能压垮数据源。比如用一个不存在的用户id获取用户信息，不论缓存还是数据库都没有，若黑客利用此漏洞进行攻击可能压垮数据库。 
 
-public class Test {
-    public st
                         
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2021-04-25
                             </span>
                         <span class="publish-author">
                             
@@ -864,8 +849,8 @@ public class Test {
                         <span class="chip bg-color">java</span>
                     </a>
                     
-                    <a href="/tags/%E5%BC%82%E5%B8%B8/">
-                        <span class="chip bg-color">异常</span>
+                    <a href="/tags/redis/">
+                        <span class="chip bg-color">redis</span>
                     </a>
                     
                 </div>
